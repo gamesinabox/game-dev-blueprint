@@ -123,6 +123,11 @@
   .learn-list{margin:6px 0; padding-left:18px; font-size:13.5px; color:var(--ink-dim);}
   .learn-list li{margin-bottom:2px;}
   .resource-link{font-family:var(--mono); font-size:12.5px; margin-top:6px; display:inline-block;}
+  .reflect-box{
+    background:var(--bg-2); border:1px solid var(--border); color:var(--ink);
+    font-family:var(--sans); font-size:13.5px; padding:8px 10px; width:100%;
+    min-height:50px; resize:vertical; margin-top:6px; box-sizing:border-box;
+  }
 
   .phase-row{
     display:flex; gap:14px; align-items:center; padding:14px 0; border-top:1px solid var(--border);
@@ -298,17 +303,25 @@ const MILESTONE_BUILDS = [
 ];
 
 const COURSES = [
-  {id:'fg-course-1', phase:1, title:'Just Enough GDScript to Start', hours:3,
-    why:'You don\u2019t need to master programming to start \u2014 just enough to move something and react to input.',
-    learn:['Variables & basic types','if/else and simple loops','Writing and calling a function','print() for debugging'],
-    resource:'Official GDScript reference (read only what you need for now)', url:'https://docs.godotengine.org/en/stable/tutorials/scripting/gdscript/gdscript_basics.html'},
-  {id:'fg-course-2', phase:1, title:'Godot Quickstart: Your First 2D Game', hours:4,
-    why:'The fastest path from a blank project to a moving, playable scene \u2014 exactly what Game 1 and 2 need and nothing more.',
+  {id:'fg-course-0', phase:1, title:'Godot Tours: Interactive Editor Walkthrough', hours:1,
+    why:'Better to get oriented by doing than by reading about menus \u2014 this runs an interactive, validated walkthrough inside the actual Godot editor.',
+    learn:['The Viewport, Scene, Inspector and FileSystem docks','The Script editor','Navigating the editor hands-on, with the tour checking your steps'],
+    resource:'GDQuest \u2014 Godot Tours (free, interactive, in-editor)', url:'https://www.gdquest.com/tutorial/godot/learning-paths/godot-tours-101/'},
+  {id:'fg-course-1', phase:1, title:'Learn GDScript From Zero (interactive)', hours:6,
+    why:'A real interactive coding app beats reading a reference page \u2014 you write actual GDScript and get immediate feedback, not just concepts to remember.',
+    learn:['Variables & basic types','if/else and simple loops','Writing and calling a function','Arrays, dictionaries and the game loop \u2014 all via hands-on exercises with feedback, not just reading'],
+    resource:'GDQuest \u2014 Learn GDScript From Zero (free, interactive, in-browser, no login)', url:'https://www.gdquest.com/library/learn_gdscript_from_zero/'},
+  {id:'fg-course-2', phase:1, title:'Build-Along: Dodge the Creeps (matches Game 1)', hours:4,
+    why:'This official tutorial builds an avoidance/chase game step by step \u2014 literally the genre of Game 1, so you\u2019re building your actual milestone as you learn, not a throwaway example.',
     learn:['Scenes & nodes','Sprite2D & CharacterBody2D','Basic input handling','Area2D collision detection (your lose condition)','A basic HUD label and restart flow','Exporting a runnable build'],
-    resource:'Official Godot docs \u2014 "Your first 2D game"', url:'https://docs.godotengine.org/en/stable/getting_started/first_2d_game/index.html'},
+    resource:'Official Godot docs \u2014 "Your first 2D game" (Dodge the Creeps)', url:'https://docs.godotengine.org/en/stable/getting_started/first_2d_game/index.html'},
+  {id:'fg-course-2b', phase:1, title:'Build-Along: Your First Platformer (matches Game 2)', hours:4,
+    why:'A full, free build-along that makes exactly a platformer \u2014 jump mechanics, tilesets, checkpoints and a death system \u2014 so Game 2 is a direct extension of a tutorial you actually followed, not a cold start.',
+    learn:['Player movement & jump physics','Tile-based level layout','Checkpoints and a death/respawn system','Exporting a browser-playable build'],
+    resource:'freeCodeCamp / Hack Club \u2014 "Learn Game Development by Building Your First Platformer with Godot" (free video build-along)', url:'https://www.freecodecamp.org/news/learn-game-development-by-building-your-first-platformer-with-godot/'},
 
-  {id:'p1-1', phase:2, title:'GDScript Basics', hours:6,
-    why:'Everything you build later is written in this language \u2014 shaky fundamentals here compound into confusing bugs everywhere else.',
+  {id:'p1-1', phase:2, title:'GDScript Basics (reference depth)', hours:3,
+    why:'You already practiced these concepts hands-on in Phase 01 via the interactive app \u2014 this is the reference pass for the details and edge cases that app doesn\u2019t cover.',
     learn:['Variables & types','Control flow (if / for / while / match)','Functions & parameters','Comments & naming habits'],
     resource:'Official GDScript reference', url:'https://docs.godotengine.org/en/stable/tutorials/scripting/gdscript/gdscript_basics.html'},
   {id:'p1-2', phase:2, title:'GDScript OOP', hours:4,
@@ -365,42 +378,51 @@ const COURSES = [
   {id:'p4-2', phase:5, title:'Networking Fundamentals for Games', hours:6,
     why:'Multiplayer bugs are almost always about latency and state sync, not the engine \u2014 understanding the underlying model is what lets you actually debug them.',
     learn:['UDP vs. TCP tradeoffs','Client-side prediction & lag compensation','Why naive networking code breaks under real-world latency'],
-    resource:'Gaffer On Games (free \u2014 referenced directly by Godot\u2019s own docs)', url:'https://gafferongames.com/'},
+    resource:'Gaffer On Games (free \u2014 referenced directly by Godot\u2019s own docs)', url:'https://gafferongames.com/',
+    reflectPrompt:'Which latency-handling technique (prediction, reconciliation, interpolation) are you using in your multiplayer practice build, and why?'},
 
   {id:'p5-1', phase:6, title:'Core Loops & Gameplay Structure', hours:3,
     why:'Every finished game needs a describable-in-one-sentence core loop, or it never actually comes together.',
     learn:['What a core loop is (and isn\u2019t)','Core vs. meta vs. onboarding loops','Diagnosing a weak loop'],
-    resource:'GameDesignSkills.com \u2014 "Core Loops in Gameplay"', url:'https://gamedesignskills.com/game-design/core-loops-in-gameplay/'},
-  {id:'p5-2', phase:6, title:'The Art of Game Design: A Book of Lenses', hours:20,
-    why:'The standard reference for examining a design decision from a hundred angles \u2014 you\u2019ll come back to this one for years.',
+    resource:'GameDesignSkills.com \u2014 "Core Loops in Gameplay"', url:'https://gamedesignskills.com/game-design/core-loops-in-gameplay/',
+    reflectPrompt:'Describe your current project\u2019s core loop in one sentence. If you can\u2019t, what\u2019s missing?'},
+  {id:'p5-2', phase:6, title:'Game Design: Art and Concepts (CalArts, Coursera)', hours:16,
+    why:'A structured course with real assignments beats a book you passively read \u2014 free to audit, and you actually produce design work to get feedback on, not just notes.',
+    learn:['Story spine & structure applied to games','Character, setting and strategic-element design','Turning a concept into a design document via guided assignments'],
+    resource:'CalArts \u2014 "Game Design: Art and Concepts" Specialization (Coursera, free to audit)', url:'https://www.coursera.org/specializations/game-design'},
+  {id:'p5-2b', phase:6, title:'The Art of Game Design: A Book of Lenses', hours:20,
+    why:'Once you\u2019ve done a structured course, this is the reference you\u2019ll keep coming back to for years \u2014 best used to look things up, not read cover to cover.',
     learn:['The "lens" framework for evaluating any design decision','Player psychology & motivation','Balancing risk, reward and fairness'],
     resource:'Book by Jesse Schell', url:'https://www.schellgames.com/art-of-game-design'},
   {id:'p5-3', phase:6, title:'Game Design Theory', hours:10,
     why:'Watching real design problems get dissected trains the instinct you\u2019ll need when nobody\u2019s there to tell you if an idea is good.',
     learn:['Why games are (or aren\u2019t) fun, structurally','Genre conventions and why they exist','Case studies of real design decisions'],
-    resource:'Extra Credits (YouTube, free)', url:'https://www.youtube.com/@extracredits'},
+    resource:'Extra Credits (YouTube, free)', url:'https://www.youtube.com/@extracredits',
+    reflectPrompt:'Name one design choice in your current build that this material changed your mind about.'},
   {id:'p5-4', phase:6, title:'UX & Game Feel', hours:4,
     why:'A mechanically sound game can still feel bad to play \u2014 this is the layer of polish that separates "functional" from "satisfying".',
     learn:['Feedback & "juice" (screen shake, hit-stop, sound cues)','Menu & onboarding flow','Reducing friction between player intent and on-screen action'],
-    resource:'Game Maker\u2019s Toolkit (YouTube, free)', url:'https://www.youtube.com/@GMTK'},
+    resource:'Game Maker\u2019s Toolkit (YouTube, free)', url:'https://www.youtube.com/@GMTK',
+    reflectPrompt:'What\u2019s one piece of "juice" (feedback, screen shake, sound cue) you added or plan to add, and why?'},
 
-  {id:'p6-1', phase:7, title:'Level Design Fundamentals', hours:15,
-    why:'Level design sits between game design and environment art \u2014 a great mechanic in a poorly-paced level still fails.',
-    learn:['Pacing, flow and metrics','Greybox/blockout process before an art pass','Teaching mechanics through layout, not text'],
-    resource:'The Level Design Book (free)', url:'https://book.leveldesignbook.com/introduction'},
+  {id:'p6-1', phase:7, title:'Level Design Fundamentals (with exercises)', hours:15,
+    why:'This isn\u2019t just a book to read \u2014 it has real design-brief exercises built in (e.g. drawing a level layout to a brief). Do those, don\u2019t just read the theory.',
+    learn:['Pacing, flow and metrics','Greybox/blockout process before an art pass','Teaching mechanics through layout, not text','Completing the book\u2019s built-in design-brief exercises, not just reading it'],
+    resource:'The Level Design Book (free, includes practice exercises)', url:'https://book.leveldesignbook.com/introduction'},
   {id:'p6-2', phase:7, title:'Level Design Case Studies', hours:6,
     why:'Seeing how shipped games teach mechanics through space is the fastest way to internalize pacing and flow.',
     learn:['How real levels guide players without text','Analyzing pacing in existing games','Applying case-study lessons to your own layouts'],
-    resource:'Game Maker\u2019s Toolkit (YouTube, free)', url:'https://www.youtube.com/@GMTK'},
+    resource:'Game Maker\u2019s Toolkit (YouTube, free)', url:'https://www.youtube.com/@GMTK',
+    reflectPrompt:'Pick one technique from a case study and describe how you\u2019re applying it to your own level.'},
 
   {id:'p7-1', phase:8, title:'Narrative Design Fundamentals', hours:8,
     why:'Even non-story-focused games make narrative choices \u2014 how those choices interact with player agency is a skill of its own, not just "writing".',
     learn:['Story structure vs. interactive structure','Branching narrative & player choice','Dialogue that reveals character efficiently'],
     resource:'UBC \u2014 "Interactive Narrative" (free course)', url:'https://www.classcentral.com/course/storytelling-university-of-british-columbia-inter-40675'},
-  {id:'p7-2', phase:8, title:'World-Building & Localization-Friendly Writing', hours:4,
-    why:'Writing that assumes idioms, wordplay, or a fixed text length breaks the moment you try to translate it \u2014 worth knowing before you write, not after.',
-    learn:['Consistent world-building','Writing dialogue that survives translation','Externalizing text instead of hardcoding it'],
-    resource:'Curated Game Narrative Resources (free)', url:'https://sashakirlee.com/game-narrative-resources'},
+  {id:'p7-2', phase:8, title:'Practice: Build a Branching Scene in Twine', hours:4,
+    why:'Writing about narrative design only goes so far \u2014 actually building a branching scene forces you to feel the structural problems (bottlenecks, pinch points, tracking state) rather than just read about them.',
+    learn:['Twine\u2019s passage-linking model','Branching choices & simple variables','Externalizing text so it could survive translation later'],
+    resource:'Twine (free, no-code, browser-based, no login)', url:'https://twinery.org/'},
 
   {id:'p8-1', phase:9, title:'Pixel Art Fundamentals', hours:8,
     why:'You don\u2019t need to be a professional artist, but placeholder gray boxes forever will quietly kill your motivation to keep building.',
@@ -427,11 +449,13 @@ const COURSES = [
   {id:'p10-1', phase:11, title:'Scoping a Solo Project', hours:3,
     why:'Uncontrolled scope is the single most common reason hobbyist projects never finish \u2014 this is a process problem, not a discipline problem.',
     learn:['Defining a minimum viable version of an idea','Recognizing "silent scope creep"','Cutting features without gutting the game'],
-    resource:'Wayline \u2014 "Essential Scope Rules for Solo Game Dev"', url:'https://www.wayline.io/blog/essential-scope-rules-solo-game-dev'},
+    resource:'Wayline \u2014 "Essential Scope Rules for Solo Game Dev"', url:'https://www.wayline.io/blog/essential-scope-rules-solo-game-dev',
+    reflectPrompt:'What\u2019s the minimum viable version of your current project, in one sentence?'},
   {id:'p10-2', phase:11, title:'Project & Milestone Planning', hours:3,
     why:'A project with no milestones has no way to notice it\u2019s off track until it\u2019s too late to fix cheaply.',
     learn:['Breaking a project into milestones (prototype / alpha / beta / release)','Task tracking without over-engineering process','Working with a Game Design Document'],
-    resource:'Wayline \u2014 "Mastering Project Management for Indie Game Developers"', url:'https://www.wayline.io/blog/project-management-indie-game-dev'},
+    resource:'Wayline \u2014 "Mastering Project Management for Indie Game Developers"', url:'https://www.wayline.io/blog/project-management-indie-game-dev',
+    reflectPrompt:'What are your next three milestones for your current project?'},
 
   {id:'p11-1', phase:12, title:'Manual QA & Bug Tracking', hours:3,
     why:'Without a system, bugs get found once, forgotten, and reintroduced later \u2014 tracking turns testing into progress instead of noise.',
@@ -440,7 +464,8 @@ const COURSES = [
   {id:'p11-2', phase:12, title:'Playtesting Methodology', hours:3,
     why:'Feedback from people who didn\u2019t build the game catches problems you\u2019re structurally unable to see yourself.',
     learn:['Structuring a playtest session','Asking questions that don\u2019t lead the witness','Separating "this is broken" from "this isn\u2019t my taste"'],
-    resource:'Game Maker\u2019s Toolkit (YouTube, free)', url:'https://www.youtube.com/@GMTK'},
+    resource:'Game Maker\u2019s Toolkit (YouTube, free)', url:'https://www.youtube.com/@GMTK',
+    reflectPrompt:'What\u2019s one piece of feedback from your last playtest you actually acted on?'},
 
   {id:'p12-1', phase:13, title:'Game Accessibility Fundamentals', hours:4,
     why:'The four most commonly-cited accessibility gaps \u2014 remapping, text size, colorblindness, subtitle presentation \u2014 are cheap to fix early and expensive to retrofit later.',
@@ -497,16 +522,19 @@ const COURSES = [
   {id:'p16-1', phase:17, title:'Licensing & IP Basics', hours:3,
     why:'Using an asset, font, or piece of music outside its license terms can force a game offline after launch \u2014 worth checking before shipping, not after a takedown notice.',
     learn:['CC0 / CC-BY / royalty-free distinctions, applied broadly','Trademark basics for naming a game safely','Copyright basics for your own work'],
-    resource:'Wayline \u2014 "Indie Game Studio Legal Guide"', url:'https://www.wayline.io/blog/indie-game-studio-legal-guide-independent-developers'},
+    resource:'Wayline \u2014 "Indie Game Studio Legal Guide"', url:'https://www.wayline.io/blog/indie-game-studio-legal-guide-independent-developers',
+    reflectPrompt:'List one asset, font, or piece of music in your current build and check its license.'},
   {id:'p16-2', phase:17, title:'Business Structure & Revenue Basics', hours:3,
     why:'Once a game earns real money, how you\u2019re structured affects liability and tax \u2014 specifics vary by country, so treat this as background before talking to an actual accountant, not a replacement for one.',
     learn:['Sole trader vs. company structures (concepts, not country-specific advice)','Platform revenue-share terms (itch.io, Steam)','Why this is the point to talk to a real accountant'],
-    resource:'Wayline \u2014 "Establishing Your Indie Game Studio: Legal Entities & Contracts"', url:'https://www.wayline.io/blog/establishing-indie-game-studio-legal-entities-contracts'},
+    resource:'Wayline \u2014 "Establishing Your Indie Game Studio: Legal Entities & Contracts"', url:'https://www.wayline.io/blog/establishing-indie-game-studio-legal-entities-contracts',
+    reflectPrompt:'If this game earned money tomorrow, what\u2019s the first business question you\u2019d need to answer?'},
 
   {id:'p17-1', phase:18, title:'Analytics & Live Ops Basics', hours:3,
     why:'Only relevant once a game is live and you want to understand player behavior or run it as an ongoing service \u2014 skip this until you\u2019re actually shipping something that keeps running.',
     learn:['Basic telemetry: what to track and why','Monetization models if going free-to-play, at a high level','Patch cadence & community moderation at scale'],
-    resource:'GameAnalytics (free resources)', url:'https://www.gameanalytics.com/'}
+    resource:'GameAnalytics (free resources)', url:'https://www.gameanalytics.com/',
+    reflectPrompt:'If you tracked one metric in your next build, what would it be and why?'}
 ];
 
 const CHECKPOINTS = [
@@ -582,7 +610,7 @@ async function loadState(){
   } else {
     try { raw = localStorage.getItem(STORE_KEY); } catch(e){ raw = null; }
   }
-  const fallback = { studied:{}, checkpoints:{}, builds:[], visits:[], milestones:{} };
+  const fallback = { studied:{}, checkpoints:{}, builds:[], visits:[], milestones:{}, reflections:{} };
   if (!raw) return fallback;
   try { return Object.assign({}, fallback, JSON.parse(raw)); } catch(e){ return fallback; }
 }
@@ -595,7 +623,7 @@ async function saveState(state){
   try { localStorage.setItem(STORE_KEY, raw); } catch(e){}
 }
 
-let STATE = { studied:{}, checkpoints:{}, builds:[], visits:[], milestones:{} };
+let STATE = { studied:{}, checkpoints:{}, builds:[], visits:[], milestones:{}, reflections:{} };
 
 /* ---------------- HELPERS ---------------- */
 
@@ -685,6 +713,15 @@ async function toggleMilestone(id){
   await persistAndRerender();
 }
 
+async function saveReflection(id, value){
+  STATE.reflections[id] = value;
+  await saveState(STATE);
+}
+
+function escapeHtml(s){
+  return (s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
 async function submitCheckpoint(cpId){
   const cp = CHECKPOINTS.find(c => c.id === cpId);
   let score = 0;
@@ -769,6 +806,13 @@ function renderTabs(){
 
 function renderCourseRow(c){
   const done = !!STATE.studied[c.id];
+  const reflectHtml = c.reflectPrompt ? (
+    '<div style="margin-top:10px; padding-top:10px; border-top:1px dashed var(--border);">' +
+      '<div class="field-label">Apply it</div>' +
+      '<p class="why" style="margin-top:4px;">' + c.reflectPrompt + '</p>' +
+      '<textarea class="reflect-box" onblur="saveReflection(\'' + c.id + '\', this.value)" placeholder="Write a sentence or two...">' + escapeHtml(STATE.reflections[c.id] || '') + '</textarea>' +
+    '</div>'
+  ) : '';
   return '<div class="course">' +
     '<input type="checkbox" ' + (done ? 'checked' : '') + ' onchange="toggleCourse(\'' + c.id + '\')">' +
     '<div class="course-body">' +
@@ -779,6 +823,7 @@ function renderCourseRow(c){
       '<p class="why">' + c.why + '</p>' +
       '<ul class="learn-list">' + c.learn.map(l => '<li>' + l + '</li>').join('') + '</ul>' +
       '<a class="resource-link" href="' + c.url + '" target="_blank" rel="noopener">' + c.resource + ' \u2197</a>' +
+      reflectHtml +
     '</div>' +
   '</div>';
 }
