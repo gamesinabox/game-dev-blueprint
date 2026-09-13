@@ -1,0 +1,1028 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Game Dev Blueprint</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0F2740;
+    --bg-2:#0C2036;
+    --panel:#153350;
+    --panel-2:#183a5c;
+    --border: rgba(160,200,225,0.28);
+    --border-strong: rgba(160,200,225,0.5);
+    --grid: rgba(160,200,225,0.07);
+    --ink:#ECEFF3;
+    --ink-dim:#93A9BE;
+    --ink-faint:#5E7690;
+    --accent:#F2994A;
+    --accent-ink:#241305;
+    --done:#4FB286;
+    --danger:#E0645A;
+    --mono:'IBM Plex Mono', 'SFMono-Regular', Consolas, monospace;
+    --sans:'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background-color:var(--bg);
+    background-image:
+      linear-gradient(var(--grid) 1px, transparent 1px),
+      linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+    background-size: 28px 28px;
+    color:var(--ink);
+    font-family:var(--sans);
+    line-height:1.5;
+    min-height:100vh;
+  }
+  a{color:var(--accent);}
+  .wrap{max-width:920px;margin:0 auto;padding:28px 20px 80px;}
+
+  header.title-block{
+    border:1px solid var(--border-strong);
+    background:var(--panel);
+    padding:20px 22px;
+    position:relative;
+    margin-bottom:22px;
+  }
+  header.title-block::before{
+    content:'';
+    position:absolute; top:6px; left:6px; width:14px; height:14px;
+    border-top:2px solid var(--accent); border-left:2px solid var(--accent);
+  }
+  header.title-block::after{
+    content:'';
+    position:absolute; bottom:6px; right:6px; width:14px; height:14px;
+    border-bottom:2px solid var(--accent); border-right:2px solid var(--accent);
+  }
+  header.title-block h1{
+    margin:0 0 6px; font-size:26px; letter-spacing:0.2px;
+  }
+  header.title-block p{margin:0; color:var(--ink-dim); font-size:14.5px; max-width:62ch;}
+  .meta-row{display:flex; gap:18px; margin-top:14px; flex-wrap:wrap;}
+  .meta-item{font-family:var(--mono); font-size:12.5px; color:var(--ink-faint);}
+  .meta-item b{color:var(--accent); font-weight:600;}
+
+  nav.tabs{
+    display:flex; gap:2px; margin-bottom:22px; flex-wrap:wrap;
+    border:1px solid var(--border); background:var(--bg-2);
+  }
+  nav.tabs button{
+    flex:1 1 auto; min-width:110px;
+    background:transparent; border:none; border-right:1px solid var(--border);
+    color:var(--ink-dim); font-family:var(--mono); font-size:13px;
+    padding:12px 10px; cursor:pointer;
+  }
+  nav.tabs button:last-child{border-right:none;}
+  nav.tabs button.active{background:var(--accent); color:var(--accent-ink); font-weight:600;}
+  nav.tabs button:not(.active):hover{background:var(--panel-2); color:var(--ink);}
+
+  .sheet{
+    border:1px solid var(--border); background:var(--panel);
+    padding:20px 20px 20px; margin-bottom:16px; position:relative;
+  }
+  .sheet[data-sheet]::before{
+    content:attr(data-sheet);
+    position:absolute; top:-1px; left:-1px;
+    background:var(--accent); color:var(--accent-ink);
+    font-family:var(--mono); font-size:11px; font-weight:700;
+    padding:3px 9px;
+  }
+  .sheet h2{margin:0 0 4px; font-size:18px; padding-top:6px;}
+  .sheet h3{margin:0 0 4px; font-size:15.5px;}
+  .sheet .tag{
+    display:inline-block; font-family:var(--mono); font-size:11px;
+    color:var(--ink-faint); border:1px solid var(--border); padding:2px 7px;
+    margin-bottom:8px;
+  }
+  .sheet .tag.optional{color:var(--accent); border-color:var(--accent);}
+  .sheet p.blurb{color:var(--ink-dim); font-size:14px; margin:6px 0 10px;}
+
+  .progress-bar{height:8px; background:var(--bg-2); border:1px solid var(--border); overflow:hidden;}
+  .progress-bar > div{height:100%; background:var(--accent);}
+  .progress-label{font-family:var(--mono); font-size:12px; color:var(--ink-faint); margin-top:6px;}
+
+  .course{
+    border-top:1px solid var(--border);
+    padding:14px 0;
+    display:flex; gap:14px; align-items:flex-start;
+  }
+  .course:first-of-type{border-top:none;}
+  .course input[type=checkbox]{
+    width:20px; height:20px; margin-top:2px; accent-color:var(--accent); cursor:pointer; flex-shrink:0;
+  }
+  .course-body{flex:1;}
+  .course-head{display:flex; justify-content:space-between; gap:10px; flex-wrap:wrap; align-items:baseline;}
+  .course-title{font-weight:600; font-size:15px;}
+  .course-title.done{color:var(--done); text-decoration:line-through; text-decoration-color:var(--ink-faint);}
+  .hours{font-family:var(--mono); font-size:12px; color:var(--ink-faint); white-space:nowrap;}
+  .why{font-size:13.5px; color:var(--ink-dim); margin:6px 0;}
+  .learn-list{margin:6px 0; padding-left:18px; font-size:13.5px; color:var(--ink-dim);}
+  .learn-list li{margin-bottom:2px;}
+  .resource-link{font-family:var(--mono); font-size:12.5px; margin-top:6px; display:inline-block;}
+
+  .phase-row{
+    display:flex; gap:14px; align-items:center; padding:14px 0; border-top:1px solid var(--border);
+  }
+  .phase-row:first-of-type{border-top:none;}
+  .phase-code{font-family:var(--mono); font-size:20px; color:var(--accent); width:34px; flex-shrink:0;}
+  .phase-info{flex:1;}
+  .phase-info h3{margin:0 0 2px;}
+  .phase-info p{margin:0; color:var(--ink-dim); font-size:13.5px;}
+  .phase-pct{font-family:var(--mono); font-size:13px; color:var(--ink-faint); width:70px; text-align:right; flex-shrink:0;}
+
+  .milestone{
+    display:flex; gap:14px; align-items:flex-start; padding:14px; margin:10px 0;
+    border:1px dashed var(--border-strong); background:var(--bg-2);
+  }
+  .milestone input[type=checkbox]{width:20px; height:20px; margin-top:2px; accent-color:var(--accent); cursor:pointer; flex-shrink:0;}
+  .milestone h4{margin:0 0 2px; font-size:15px;}
+  .milestone h4.done{color:var(--done); text-decoration:line-through; text-decoration-color:var(--ink-faint);}
+  .milestone p{margin:2px 0; color:var(--ink-dim); font-size:13.5px;}
+  .milestone .scope{color:var(--ink-faint); font-family:var(--mono); font-size:12px;}
+  .milestone .unlock{color:var(--accent); font-size:13px; margin-top:6px;}
+
+  .ground-rules{list-style:none; margin:0; padding:0;}
+  .ground-rules li{border-top:1px solid var(--border); padding:10px 0;}
+  .ground-rules li:first-child{border-top:none;}
+  .ground-rules .gr-label{font-weight:600; font-size:14px;}
+  .ground-rules .gr-desc{color:var(--ink-dim); font-size:13px; margin-top:2px;}
+
+  .checklist-grid{display:grid; grid-template-columns:1fr 1fr; gap:8px 20px; margin-top:8px;}
+  @media (max-width:640px){.checklist-grid{grid-template-columns:1fr;}}
+  .checklist-item{display:flex; align-items:baseline; gap:8px; font-size:13.5px; padding:4px 0;}
+  .checklist-item .mark{font-family:var(--mono); width:16px; flex-shrink:0;}
+  .checklist-item .mark.yes{color:var(--done);}
+  .checklist-item .mark.no{color:var(--ink-faint);}
+  .checklist-item.covered{color:var(--ink);}
+  .checklist-item.uncovered{color:var(--ink-faint);}
+
+  button.primary{
+    background:var(--accent); color:var(--accent-ink); border:none;
+    font-family:var(--mono); font-size:13px; font-weight:600;
+    padding:10px 16px; cursor:pointer;
+  }
+  button.primary:hover{opacity:0.9;}
+  button.ghost{
+    background:transparent; color:var(--ink-dim); border:1px solid var(--border);
+    font-family:var(--mono); font-size:12.5px; padding:8px 12px; cursor:pointer;
+  }
+  button.ghost:hover{border-color:var(--border-strong); color:var(--ink);}
+
+  .quiz-q{border-top:1px solid var(--border); padding:14px 0;}
+  .quiz-q:first-of-type{border-top:none;}
+  .quiz-q p.qtext{font-weight:600; margin:0 0 8px;}
+  .quiz-q label{display:block; font-size:14px; color:var(--ink-dim); padding:5px 0; cursor:pointer;}
+  .quiz-q label input{margin-right:8px;}
+  .quiz-result{margin-top:4px; font-size:13px; padding:8px 10px; display:none;}
+  .quiz-result.show{display:block;}
+  .quiz-result.correct{background:rgba(79,178,134,0.12); border:1px solid var(--done); color:var(--done);}
+  .quiz-result.incorrect{background:rgba(224,101,90,0.12); border:1px solid var(--danger); color:var(--danger);}
+  .quiz-score{font-family:var(--mono); font-size:14px; margin-top:14px; padding-top:14px; border-top:1px solid var(--border);}
+
+  form.build-form{display:flex; flex-direction:column; gap:10px;}
+  form.build-form input[type=text], form.build-form textarea, form.build-form select{
+    background:var(--bg-2); border:1px solid var(--border); color:var(--ink);
+    font-family:var(--sans); font-size:14px; padding:9px 10px; width:100%;
+  }
+  form.build-form textarea{resize:vertical; min-height:60px;}
+  .skill-tags{display:flex; flex-wrap:wrap; gap:8px;}
+  .skill-tags label{
+    font-family:var(--mono); font-size:12px; border:1px solid var(--border);
+    padding:5px 9px; cursor:pointer; color:var(--ink-dim);
+  }
+  .skill-tags input{margin-right:5px;}
+  .field-label{font-family:var(--mono); font-size:11.5px; color:var(--ink-faint); margin-bottom:-4px;}
+
+  .build-card{border:1px solid var(--border); padding:14px 16px; margin-top:12px; position:relative;}
+  .build-card h3{margin:0 0 4px;}
+  .build-card .status{
+    font-family:var(--mono); font-size:11px; color:var(--accent); border:1px solid var(--accent);
+    padding:2px 7px; display:inline-block; margin-bottom:8px; margin-right:6px;
+  }
+  .build-card .genre{
+    font-family:var(--mono); font-size:11px; color:var(--ink-dim); border:1px solid var(--border);
+    padding:2px 7px; display:inline-block; margin-bottom:8px;
+  }
+  .build-card p{margin:6px 0; font-size:13.5px; color:var(--ink-dim);}
+  .build-card .skills{font-family:var(--mono); font-size:11.5px; color:var(--ink-faint);}
+  .build-card .del{position:absolute; top:12px; right:12px;}
+
+  .today-grid{display:grid; grid-template-columns:1fr 1fr; gap:16px;}
+  @media (max-width:640px){.today-grid{grid-template-columns:1fr;}}
+  .stat-num{font-family:var(--mono); font-size:34px; color:var(--accent); font-weight:700; line-height:1;}
+  .stat-label{color:var(--ink-dim); font-size:13px; margin-top:6px;}
+  .heatmap{display:grid; grid-template-columns:repeat(14, 1fr); gap:4px; margin-top:10px;}
+  .heatmap .cell{aspect-ratio:1; background:var(--bg-2); border:1px solid var(--border);}
+  .heatmap .cell.filled{background:var(--accent); border-color:var(--accent);}
+  .pace-row{display:flex; gap:10px; align-items:center; margin-top:10px; flex-wrap:wrap;}
+  .pace-row input{width:70px; background:var(--bg-2); border:1px solid var(--border); color:var(--ink); font-family:var(--mono); padding:7px 8px;}
+  .pace-out{font-family:var(--mono); font-size:13.5px; color:var(--ink-dim); margin-top:10px;}
+
+  .empty{color:var(--ink-faint); font-size:13.5px; font-style:normal; padding:10px 0;}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="title-block">
+    <h1>Game Dev Blueprint</h1>
+    <p>Make two quick games first, then go deep &mdash; and keep building one milestone game after almost every phase, each time picking up whatever new mechanic that phase just taught. Programming, engine, design, level design, writing, art, audio, production, QA, accessibility, optimization, publishing, marketing, and business. What you build is entirely your call.</p>
+    <div class="meta-row">
+      <div class="meta-item">Engine: <b>Godot 4 / GDScript</b></div>
+      <div class="meta-item" id="metaProgress">Progress: <b>0%</b></div>
+      <div class="meta-item" id="metaStreak">Streak: <b>0 days</b></div>
+    </div>
+  </header>
+
+  <nav class="tabs" id="tabs"></nav>
+  <div id="tabContent"></div>
+
+</div>
+
+<script>
+/* ---------------- DATA ---------------- */
+
+const PHASES = [
+  {id:1, code:'01', name:'First Games \u2014 Learn By Making', tag:'Practice', blurb:'Just enough to build something, fast. Two quick games \u2014 nothing harder yet.'},
+  {id:2, code:'02', name:'Foundations', tag:'Programming', blurb:'Now go back and actually learn the language properly.'},
+  {id:3, code:'03', name:'Engine Basics', tag:'Engine', blurb:'Godot\u2019s scene tree, nodes, physics and input.'},
+  {id:4, code:'04', name:'Core Systems', tag:'Systems', blurb:'UI, persistent state, save/load, animation, basic AI and level-building tools.'},
+  {id:5, code:'05', name:'Networking & Multiplayer', tag:'Networking', blurb:'Turning a singleplayer prototype into something more than one person can play.'},
+  {id:6, code:'06', name:'Game Design & Ideation', tag:'Design', blurb:'How good ideas get found, scoped and tested \u2014 concepts, not concepts for any specific game.'},
+  {id:7, code:'07', name:'Level Design', tag:'Level Design', blurb:'The discipline of building the spaces players move through \u2014 sits between design and art.'},
+  {id:8, code:'08', name:'Writing & Narrative', tag:'Narrative', blurb:'Story, dialogue and world-building \u2014 relevant even to games that aren\u2019t story-first.'},
+  {id:9, code:'09', name:'Art & Visuals', tag:'Art', blurb:'Enough pixel art and 3D asset skill that a build looks intentional, not placeholder.'},
+  {id:10, code:'10', name:'Sound & Music', tag:'Audio', blurb:'Sourcing and implementing audio so a build doesn\u2019t feel silent and flat.'},
+  {id:11, code:'11', name:'Production & Project Management', tag:'Production', blurb:'Scoping, milestones and task tracking \u2014 the discipline that keeps a project finishable.'},
+  {id:12, code:'12', name:'Quality Assurance & Testing', tag:'QA', blurb:'Bug tracking, regression testing and structured playtesting.'},
+  {id:13, code:'13', name:'Accessibility & Localization', tag:'Accessibility', blurb:'Designing for players with different needs, and for languages beyond your own.'},
+  {id:14, code:'14', name:'Optimization & Platform Export', tag:'Shipping', blurb:'Making it run well and exporting it correctly across platforms.'},
+  {id:15, code:'15', name:'Publishing & Distribution', tag:'Publishing', blurb:'Getting a real build in front of real players on itch.io, Steam, or mobile.'},
+  {id:16, code:'16', name:'Marketing & Community', tag:'Marketing', blurb:'Store pages, trailers, devlogs and building an audience before launch.'},
+  {id:17, code:'17', name:'Business & Legal', tag:'Business', blurb:'Licensing, IP and the business-structure basics worth knowing before money is involved.'},
+  {id:18, code:'18', name:'Live Operations', tag:'Optional', blurb:'Only relevant once a game ships and keeps running \u2014 analytics, monetization, patch cadence.'},
+  {id:19, code:'19', name:'Practice Loop & Meta-Skills', tag:'Ongoing', blurb:'Where you keep designing on your own terms \u2014 plus the unglamorous skills (finishing, handling feedback, staying current) that matter more than any single course.'}
+];
+
+/* Baseline mechanics, each tagged with the phase that actually teaches it.
+   A mechanic is only "available" once you've reached its unlockPhase \u2014
+   milestone builds only ever ask for what you could plausibly know by then. */
+const GROUND_RULES = [
+  {key:'lose_condition', label:'A win or lose condition', desc:'The game needs a real way to end \u2014 caught, fell, ran out of time, whatever fits.', unlockPhase:1},
+  {key:'score', label:'Score or progress tracking', desc:'Some number that goes up \u2014 distance, time survived, points, anything measurable.', unlockPhase:1},
+  {key:'restart', label:'Restart without relaunching', desc:'The player can retry immediately.', unlockPhase:1},
+  {key:'hud', label:'Basic UI / HUD', desc:'Score, health, or state visible on screen \u2014 a single Label node is enough this early.', unlockPhase:1},
+  {key:'health', label:'Health or a risk/failure mechanic', desc:'Doesn\u2019t have to be a bar \u2014 lives, a timer, or instant-fail all count.', unlockPhase:1},
+  {key:'difficulty', label:'Some difficulty progression', desc:'Speeds up, adds obstacles, or otherwise changes over time rather than staying static.', unlockPhase:1},
+  {key:'save', label:'A saved state', desc:'A persisted high score or similar. Unlocks properly once Save & Load Systems is covered.', unlockPhase:4},
+  {key:'audio', label:'Basic audio feedback', desc:'At least one real sound effect. Unlocks properly once Audio Implementation is covered.', unlockPhase:10}
+];
+
+/* Every milestone build, spaced out across the plan \u2014 not front-loaded.
+   afterPhase = appears once that phase's courses are done. */
+const MILESTONE_BUILDS = [
+  {id:'mb1', afterPhase:1, label:'Game 1 \u2014 Avoidance / Chase', hint:'Something the player has to outrun or dodge \u2014 the actual concept is yours.', scope:'1\u20132 weeks part-time'},
+  {id:'mb2', afterPhase:1, label:'Game 2 \u2014 Platformer', hint:'Basic jump-and-run movement through a level \u2014 concept is yours.', scope:'1\u20132 weeks part-time'},
+  {id:'mb3', afterPhase:4, label:'Game 3 \u2014 Something Harder', hint:'One tier up in complexity. A small puzzle game fits particularly well here, but the concept is yours.', scope:'2\u20133 weeks part-time'},
+  {id:'mb4', afterPhase:5, label:'Practice build \u2014 Multiplayer', hint:'Add basic local or online multiplayer to an earlier build, or make a tiny new 2-player game, purely to exercise the networking model while it\u2019s fresh.', scope:'1\u20132 weeks part-time'},
+  {id:'mb5', afterPhase:7, label:'Practice build \u2014 Top-down Action / Dungeon Crawler', hint:'Level design, basic AI and TileMaps all come together naturally here.', scope:'2\u20133 weeks part-time'},
+  {id:'mb6', afterPhase:8, label:'Practice build \u2014 Narrative / Dialogue-driven', hint:'Even a tiny branching-dialogue scene is enough to practice narrative structure.', scope:'~1 week part-time'},
+  {id:'mb7', afterPhase:9, label:'Practice build \u2014 Art-only remake', hint:'Rebuild one earlier game using only art you made yourself.', scope:'~1 week part-time'},
+  {id:'mb8', afterPhase:10, label:'Practice build \u2014 Full audio pass', hint:'Add full custom audio (music + SFX) to one earlier build \u2014 this is also where "basic audio feedback" officially unlocks below.', scope:'3\u20135 days part-time'},
+  {id:'mb9', afterPhase:11, label:'Practice build \u2014 Idle / Incremental or Management-Sim', hint:'These live or die on scoping and systems balance \u2014 a good stress test right after Production & Project Management.', scope:'2\u20133 weeks part-time'},
+  {id:'mb10', afterPhase:14, label:'Practice build \u2014 Shooter (bullet-hell or on-rails)', hint:'Performance- and systems-heavy \u2014 a solid test right after optimization and export.', scope:'2\u20133 weeks part-time'}
+];
+
+const COURSES = [
+  {id:'fg-course-1', phase:1, title:'Just Enough GDScript to Start', hours:3,
+    why:'You don\u2019t need to master programming to start \u2014 just enough to move something and react to input.',
+    learn:['Variables & basic types','if/else and simple loops','Writing and calling a function','print() for debugging'],
+    resource:'Official GDScript reference (read only what you need for now)', url:'https://docs.godotengine.org/en/stable/tutorials/scripting/gdscript/gdscript_basics.html'},
+  {id:'fg-course-2', phase:1, title:'Godot Quickstart: Your First 2D Game', hours:4,
+    why:'The fastest path from a blank project to a moving, playable scene \u2014 exactly what Game 1 and 2 need and nothing more.',
+    learn:['Scenes & nodes','Sprite2D & CharacterBody2D','Basic input handling','Area2D collision detection (your lose condition)','A basic HUD label and restart flow','Exporting a runnable build'],
+    resource:'Official Godot docs \u2014 "Your first 2D game"', url:'https://docs.godotengine.org/en/stable/getting_started/first_2d_game/index.html'},
+
+  {id:'p1-1', phase:2, title:'GDScript Basics', hours:6,
+    why:'Everything you build later is written in this language \u2014 shaky fundamentals here compound into confusing bugs everywhere else.',
+    learn:['Variables & types','Control flow (if / for / while / match)','Functions & parameters','Comments & naming habits'],
+    resource:'Official GDScript reference', url:'https://docs.godotengine.org/en/stable/tutorials/scripting/gdscript/gdscript_basics.html'},
+  {id:'p1-2', phase:2, title:'GDScript OOP', hours:4,
+    why:'Godot leans on classes and inheritance for everything from enemies to UI \u2014 this is how you avoid copy-pasting scripts everywhere.',
+    learn:['class_name & extends','_init and constructors','Inheritance & method overriding','self and scope'],
+    resource:'Official GDScript docs \u2014 classes', url:'https://docs.godotengine.org/en/stable/tutorials/scripting/gdscript/gdscript_basics.html#classes'},
+  {id:'p1-3', phase:2, title:'Programming Logic Practice (optional, Python)', hours:8,
+    why:'A second language proves whether you actually understand the concepts, or just pattern-matched GDScript syntax.',
+    learn:['Game loops','Sprites & collision detection','Vectors','OOP in a different syntax'],
+    resource:'Boot.dev \u2014 Build Asteroids with Python & Pygame', url:'https://www.boot.dev/courses/build-asteroids-python'},
+
+  {id:'p2-1', phase:3, title:'Your First 2D Game (in full)', hours:4,
+    why:'You skimmed this for speed in Phase 01 \u2014 now go back through it properly for the concepts you glossed over.',
+    learn:['Scenes & nodes','Sprite2D & CharacterBody2D','Signals','Exporting a runnable build'],
+    resource:'Official Godot docs \u2014 "Your first 2D game"', url:'https://docs.godotengine.org/en/stable/getting_started/first_2d_game/index.html'},
+  {id:'p2-2', phase:3, title:'Your First 3D Game', hours:5,
+    why:'3D introduces camera and physics concepts 2D doesn\u2019t need \u2014 worth learning deliberately rather than guessing.',
+    learn:['CharacterBody3D','Camera3D & basic mouse-look','CollisionShape3D','3D signals & Area3D'],
+    resource:'Official Godot docs \u2014 "Your first 3D game"', url:'https://docs.godotengine.org/en/stable/getting_started/first_3d_game/index.html'},
+  {id:'p2-3', phase:3, title:'Godot 4 Fundamentals Series', hours:10,
+    why:'A structured walkthrough of input, physics and signals catches gaps the official docs assume you\u2019ll fill in yourself.',
+    learn:['Input Map & _input / _process / _physics_process','move_and_slide & gravity','Custom signals','Node communication patterns'],
+    resource:'GDQuest (YouTube, free)', url:'https://www.youtube.com/@gdquest'},
+
+  {id:'p3-1', phase:4, title:'UI with Control Nodes', hours:4,
+    why:'Every game needs a score, a health bar, or a menu \u2014 this is the one visual system that isn\u2019t optional.',
+    learn:['Control node basics','CanvasLayer','Buttons, labels, progress bars','Anchors & containers for responsive UI'],
+    resource:'Official Godot docs \u2014 User Interface', url:'https://docs.godotengine.org/en/stable/tutorials/ui/index.html'},
+  {id:'p3-2', phase:4, title:'Autoloads & Persistent State', hours:2,
+    why:'Without this, data resets every time you change scenes \u2014 the single most common beginner wall.',
+    learn:['Autoload singletons','Sharing state across scenes','When not to reach for a singleton'],
+    resource:'Official Godot docs \u2014 Singletons (Autoload)', url:'https://docs.godotengine.org/en/stable/tutorials/scripting/singletons_autoload.html'},
+  {id:'p3-3', phase:4, title:'Save & Load Systems', hours:3,
+    why:'A game that can\u2019t save progress feels unfinished no matter how good the mechanics are. This is where "a saved state" officially unlocks for your builds.',
+    learn:['FileAccess','Reading & writing JSON','Godot\u2019s resource-based saving'],
+    resource:'Official Godot docs \u2014 Saving games', url:'https://docs.godotengine.org/en/stable/tutorials/io/saving_games.html'},
+  {id:'p3-4', phase:4, title:'Animation with AnimationPlayer', hours:4,
+    why:'A character or object that doesn\u2019t animate reads as unfinished no matter how solid the underlying mechanic is.',
+    learn:['The Animation panel','Animating any node property','Animation tracks & timing','Triggering animations from code'],
+    resource:'Official Godot docs \u2014 Introduction to the animation features', url:'https://docs.godotengine.org/en/stable/tutorials/animation/introduction.html'},
+  {id:'p3-5', phase:4, title:'Basic AI & State Machines', hours:6,
+    why:'Almost anything that needs to behave \u2014 an enemy, a hazard, even a menu \u2014 is cleaner as a small state machine than a pile of if-statements.',
+    learn:['What a finite state machine is and why it prevents impossible states','Enum-based vs. node-based state machines','Building patrol/chase/attack style behavior'],
+    resource:'Godot 4 State Machine Tutorial (GDScript)', url:'https://godotlearning.com/blog/godot-4-state-machine-tutorial'},
+  {id:'p3-6', phase:4, title:'Level-Building with TileMaps', hours:4,
+    why:'Hand-placing every tile of a level doesn\u2019t scale \u2014 this is the tool almost every 2D game ends up using for layout.',
+    learn:['TileSet & TileMapLayer basics','Painting and organizing layers','Collision & navigation from tile data'],
+    resource:'Official Godot docs \u2014 Using TileMaps', url:'https://docs.godotengine.org/en/stable/tutorials/2d/using_tilemaps.html'},
+
+  {id:'p4-1', phase:5, title:'Godot\u2019s High-Level Multiplayer API', hours:6,
+    why:'Turning a singleplayer prototype into something two people can play needs an entirely different mental model of state and authority.',
+    learn:['SceneTree-based multiplayer','RPCs and authority','Peer-to-peer vs. client-server basics'],
+    resource:'Official Godot docs \u2014 High-level multiplayer', url:'https://docs.godotengine.org/en/stable/tutorials/networking/high_level_multiplayer.html'},
+  {id:'p4-2', phase:5, title:'Networking Fundamentals for Games', hours:6,
+    why:'Multiplayer bugs are almost always about latency and state sync, not the engine \u2014 understanding the underlying model is what lets you actually debug them.',
+    learn:['UDP vs. TCP tradeoffs','Client-side prediction & lag compensation','Why naive networking code breaks under real-world latency'],
+    resource:'Gaffer On Games (free \u2014 referenced directly by Godot\u2019s own docs)', url:'https://gafferongames.com/'},
+
+  {id:'p5-1', phase:6, title:'Core Loops & Gameplay Structure', hours:3,
+    why:'Every finished game needs a describable-in-one-sentence core loop, or it never actually comes together.',
+    learn:['What a core loop is (and isn\u2019t)','Core vs. meta vs. onboarding loops','Diagnosing a weak loop'],
+    resource:'GameDesignSkills.com \u2014 "Core Loops in Gameplay"', url:'https://gamedesignskills.com/game-design/core-loops-in-gameplay/'},
+  {id:'p5-2', phase:6, title:'The Art of Game Design: A Book of Lenses', hours:20,
+    why:'The standard reference for examining a design decision from a hundred angles \u2014 you\u2019ll come back to this one for years.',
+    learn:['The "lens" framework for evaluating any design decision','Player psychology & motivation','Balancing risk, reward and fairness'],
+    resource:'Book by Jesse Schell', url:'https://www.schellgames.com/art-of-game-design'},
+  {id:'p5-3', phase:6, title:'Game Design Theory', hours:10,
+    why:'Watching real design problems get dissected trains the instinct you\u2019ll need when nobody\u2019s there to tell you if an idea is good.',
+    learn:['Why games are (or aren\u2019t) fun, structurally','Genre conventions and why they exist','Case studies of real design decisions'],
+    resource:'Extra Credits (YouTube, free)', url:'https://www.youtube.com/@extracredits'},
+  {id:'p5-4', phase:6, title:'UX & Game Feel', hours:4,
+    why:'A mechanically sound game can still feel bad to play \u2014 this is the layer of polish that separates "functional" from "satisfying".',
+    learn:['Feedback & "juice" (screen shake, hit-stop, sound cues)','Menu & onboarding flow','Reducing friction between player intent and on-screen action'],
+    resource:'Game Maker\u2019s Toolkit (YouTube, free)', url:'https://www.youtube.com/@GMTK'},
+
+  {id:'p6-1', phase:7, title:'Level Design Fundamentals', hours:15,
+    why:'Level design sits between game design and environment art \u2014 a great mechanic in a poorly-paced level still fails.',
+    learn:['Pacing, flow and metrics','Greybox/blockout process before an art pass','Teaching mechanics through layout, not text'],
+    resource:'The Level Design Book (free)', url:'https://book.leveldesignbook.com/introduction'},
+  {id:'p6-2', phase:7, title:'Level Design Case Studies', hours:6,
+    why:'Seeing how shipped games teach mechanics through space is the fastest way to internalize pacing and flow.',
+    learn:['How real levels guide players without text','Analyzing pacing in existing games','Applying case-study lessons to your own layouts'],
+    resource:'Game Maker\u2019s Toolkit (YouTube, free)', url:'https://www.youtube.com/@GMTK'},
+
+  {id:'p7-1', phase:8, title:'Narrative Design Fundamentals', hours:8,
+    why:'Even non-story-focused games make narrative choices \u2014 how those choices interact with player agency is a skill of its own, not just "writing".',
+    learn:['Story structure vs. interactive structure','Branching narrative & player choice','Dialogue that reveals character efficiently'],
+    resource:'UBC \u2014 "Interactive Narrative" (free course)', url:'https://www.classcentral.com/course/storytelling-university-of-british-columbia-inter-40675'},
+  {id:'p7-2', phase:8, title:'World-Building & Localization-Friendly Writing', hours:4,
+    why:'Writing that assumes idioms, wordplay, or a fixed text length breaks the moment you try to translate it \u2014 worth knowing before you write, not after.',
+    learn:['Consistent world-building','Writing dialogue that survives translation','Externalizing text instead of hardcoding it'],
+    resource:'Curated Game Narrative Resources (free)', url:'https://sashakirlee.com/game-narrative-resources'},
+
+  {id:'p8-1', phase:9, title:'Pixel Art Fundamentals', hours:8,
+    why:'You don\u2019t need to be a professional artist, but placeholder gray boxes forever will quietly kill your motivation to keep building.',
+    learn:['Aseprite basics','Palettes & readability at small sizes','Basic sprite animation'],
+    resource:'Aseprite + beginner tutorials (MortMort, Adam C Younis)', url:'https://www.aseprite.org/'},
+  {id:'p8-2', phase:9, title:'Study Professional Free Assets', hours:3,
+    why:'Taking apart CC0 assets that already ship in real games teaches proportion and style faster than tutorials alone.',
+    learn:['How sprite sheets are organized','Consistent style across a set of assets','What "game-ready" actually looks like'],
+    resource:'Kenney.nl \u2014 free CC0 asset packs & starter kits', url:'https://kenney.nl/assets'},
+  {id:'p8-3', phase:9, title:'3D Modeling Fundamentals', hours:15,
+    why:'If you ever want a 3D build to look like more than default gray capsules, this is the unavoidable skill.',
+    learn:['Blender interface & navigation','Basic modeling: extrude, inset, bevel','Low-poly modeling for game-ready assets','Exporting to Godot-compatible formats'],
+    resource:'Blender.org fundamentals + Blender Guru\u2019s "Donut" tutorial', url:'https://www.blender.org/support/tutorials/'},
+
+  {id:'p9-1', phase:10, title:'Audio Implementation', hours:3,
+    why:'Silent games feel unfinished even when everything else works. This is where "basic audio feedback" officially unlocks for your builds.',
+    learn:['AudioStreamPlayer vs. 2D/3D variants','Audio buses & mixing','Looping music correctly'],
+    resource:'Official Godot docs \u2014 Audio streams', url:'https://docs.godotengine.org/en/stable/tutorials/audio/audio_streams.html'},
+  {id:'p9-2', phase:10, title:'Sourcing Sound Effects & Music', hours:2,
+    why:'You don\u2019t need to compose music to have good audio \u2014 you need to know where legitimate, license-clear audio actually comes from.',
+    learn:['CC0 vs. CC-BY licensing basics','Finding SFX that match a game\u2019s tone','Building a small personal sound library'],
+    resource:'Freesound.org + Kenney audio packs', url:'https://freesound.org/'},
+
+  {id:'p10-1', phase:11, title:'Scoping a Solo Project', hours:3,
+    why:'Uncontrolled scope is the single most common reason hobbyist projects never finish \u2014 this is a process problem, not a discipline problem.',
+    learn:['Defining a minimum viable version of an idea','Recognizing "silent scope creep"','Cutting features without gutting the game'],
+    resource:'Wayline \u2014 "Essential Scope Rules for Solo Game Dev"', url:'https://www.wayline.io/blog/essential-scope-rules-solo-game-dev'},
+  {id:'p10-2', phase:11, title:'Project & Milestone Planning', hours:3,
+    why:'A project with no milestones has no way to notice it\u2019s off track until it\u2019s too late to fix cheaply.',
+    learn:['Breaking a project into milestones (prototype / alpha / beta / release)','Task tracking without over-engineering process','Working with a Game Design Document'],
+    resource:'Wayline \u2014 "Mastering Project Management for Indie Game Developers"', url:'https://www.wayline.io/blog/project-management-indie-game-dev'},
+
+  {id:'p11-1', phase:12, title:'Manual QA & Bug Tracking', hours:3,
+    why:'Without a system, bugs get found once, forgotten, and reintroduced later \u2014 tracking turns testing into progress instead of noise.',
+    learn:['Writing a reproducible bug report','Prioritizing by severity vs. frequency','Regression testing after a fix'],
+    resource:'GitHub Issues docs (a tool you already have, tracking this repo)', url:'https://docs.github.com/en/issues/tracking-your-work-with-issues/about-issues'},
+  {id:'p11-2', phase:12, title:'Playtesting Methodology', hours:3,
+    why:'Feedback from people who didn\u2019t build the game catches problems you\u2019re structurally unable to see yourself.',
+    learn:['Structuring a playtest session','Asking questions that don\u2019t lead the witness','Separating "this is broken" from "this isn\u2019t my taste"'],
+    resource:'Game Maker\u2019s Toolkit (YouTube, free)', url:'https://www.youtube.com/@GMTK'},
+
+  {id:'p12-1', phase:13, title:'Game Accessibility Fundamentals', hours:4,
+    why:'The four most commonly-cited accessibility gaps \u2014 remapping, text size, colorblindness, subtitle presentation \u2014 are cheap to fix early and expensive to retrofit later.',
+    learn:['Basic / intermediate / advanced accessibility tiers','Remappable controls & difficulty options','Colorblind-safe design & subtitle presentation'],
+    resource:'Game Accessibility Guidelines (free)', url:'https://gameaccessibilityguidelines.com/'},
+  {id:'p12-2', phase:13, title:'Localization Basics', hours:2,
+    why:'Bolting on translation after launch is far more expensive than designing text systems to support it from day one.',
+    learn:['Externalizing all in-game text','Handling variable text length across languages','What "localization-ready" actually means technically'],
+    resource:'Official Godot docs \u2014 Internationalizing games', url:'https://docs.godotengine.org/en/stable/tutorials/i18n/internationalizing_games.html'},
+
+  {id:'p13-1', phase:14, title:'General Optimization', hours:3,
+    why:'A game that stutters loses players regardless of how good the design is \u2014 this is the authoritative source on avoiding that.',
+    learn:['Common performance pitfalls','Draw calls & batching basics','When optimization is (and isn\u2019t) worth your time'],
+    resource:'Official Godot docs \u2014 General optimization tips', url:'https://docs.godotengine.org/en/stable/tutorials/performance/general_optimization.html'},
+  {id:'p13-2', phase:14, title:'CPU Optimization', hours:2,
+    why:'Knowing how to actually measure a bottleneck beats guessing at one.',
+    learn:['Profiling in the Godot debugger','Finding the real bottleneck vs. the obvious suspect','Object pooling basics'],
+    resource:'Official Godot docs \u2014 CPU optimization', url:'https://docs.godotengine.org/en/stable/tutorials/performance/cpu_optimization.html'},
+  {id:'p13-3', phase:14, title:'Exporting to Multiple Platforms', hours:4,
+    why:'PC, mobile and web builds each have different constraints \u2014 exporting isn\u2019t just clicking a different preset.',
+    learn:['Export presets for Desktop / Mobile / Web','Platform-specific input handling (touch vs. keyboard/gamepad)','Common export pitfalls per platform'],
+    resource:'Official Godot docs \u2014 Exporting projects', url:'https://docs.godotengine.org/en/stable/tutorials/export/index.html'},
+  {id:'p13-4', phase:14, title:'Version Control for Godot Projects', hours:2,
+    why:'Without this, one bad session can wipe out days of work \u2014 and you lose the ability to try something risky and roll it back.',
+    learn:['What Godot-specific files to exclude from Git','Setting up .gitignore/.gitattributes automatically','Git LFS basics for large binary assets (art, audio)'],
+    resource:'Official Godot docs \u2014 Version control systems', url:'https://docs.godotengine.org/en/stable/tutorials/best_practices/version_control_systems.html'},
+
+  {id:'p14-1', phase:15, title:'Publishing on itch.io', hours:2,
+    why:'This is the fastest, lowest-friction way to get a real build in front of real players and hear back.',
+    learn:['Preparing an exported build for upload','Writing a page that actually gets clicked','Pricing options: free, pay-what-you-want, fixed'],
+    resource:'itch.io \u2014 creator docs', url:'https://itch.io/docs/creators/general-tips'},
+  {id:'p14-2', phase:15, title:'Publishing on Steam', hours:6,
+    why:'Steam is the largest PC storefront, but it has real fixed costs and lead times ($100 fee, a 30-day wait, a 2-week minimum Coming Soon period) worth planning around, not discovering last minute.',
+    learn:['Steamworks account & the Steam Direct fee','Store page requirements & timing','Build upload via SteamPipe'],
+    resource:'Steamworks \u2014 official partner site', url:'https://partner.steamgames.com/'},
+  {id:'p14-3', phase:15, title:'Mobile & Age Rating Basics', hours:3,
+    why:'Mobile stores and age-rating bodies have their own submission requirements, entirely separate from PC storefronts.',
+    learn:['Google Play & App Store submission basics','IARC / ESRB / PEGI age-rating process','Platform-specific review timelines'],
+    resource:'Official Godot docs \u2014 Exporting for Android', url:'https://docs.godotengine.org/en/stable/tutorials/export/exporting_for_android.html'},
+
+  {id:'p15-1', phase:16, title:'Store Page & Trailer Basics', hours:4,
+    why:'Your store page does most of the persuading before anyone even plays a demo \u2014 a weak page loses interest no matter how good the game is.',
+    learn:['What makes a capsule/cover image work','Structuring a short trailer','Writing scannable store copy'],
+    resource:'itch.io creator docs (principles carry across platforms)', url:'https://itch.io/docs/creators/general-tips'},
+  {id:'p15-2', phase:16, title:'Community Building & Devlogs', hours:3,
+    why:'An audience that finds out about your game at launch is starting from zero \u2014 one that\u2019s followed a devlog for months already wants it.',
+    learn:['Devlog cadence & what to share','Where indie communities actually gather','Turning progress updates into marketing without feeling like marketing'],
+    resource:'itch.io \u2014 community & devlog features', url:'https://itch.io/updates'},
+  {id:'p15-3', phase:16, title:'Wishlist Strategy (Steam)', hours:3,
+    why:'Steam\u2019s discovery is driven substantially by wishlist momentum before launch \u2014 the single highest-leverage pre-launch activity on that platform.',
+    learn:['Coming Soon page timing','Steam Next Fest participation','What actually converts a page visit into a wishlist'],
+    resource:'Steamworks \u2014 official partner site', url:'https://partner.steamgames.com/'},
+
+  {id:'p16-1', phase:17, title:'Licensing & IP Basics', hours:3,
+    why:'Using an asset, font, or piece of music outside its license terms can force a game offline after launch \u2014 worth checking before shipping, not after a takedown notice.',
+    learn:['CC0 / CC-BY / royalty-free distinctions, applied broadly','Trademark basics for naming a game safely','Copyright basics for your own work'],
+    resource:'Wayline \u2014 "Indie Game Studio Legal Guide"', url:'https://www.wayline.io/blog/indie-game-studio-legal-guide-independent-developers'},
+  {id:'p16-2', phase:17, title:'Business Structure & Revenue Basics', hours:3,
+    why:'Once a game earns real money, how you\u2019re structured affects liability and tax \u2014 specifics vary by country, so treat this as background before talking to an actual accountant, not a replacement for one.',
+    learn:['Sole trader vs. company structures (concepts, not country-specific advice)','Platform revenue-share terms (itch.io, Steam)','Why this is the point to talk to a real accountant'],
+    resource:'Wayline \u2014 "Establishing Your Indie Game Studio: Legal Entities & Contracts"', url:'https://www.wayline.io/blog/establishing-indie-game-studio-legal-entities-contracts'},
+
+  {id:'p17-1', phase:18, title:'Analytics & Live Ops Basics', hours:3,
+    why:'Only relevant once a game is live and you want to understand player behavior or run it as an ongoing service \u2014 skip this until you\u2019re actually shipping something that keeps running.',
+    learn:['Basic telemetry: what to track and why','Monetization models if going free-to-play, at a high level','Patch cadence & community moderation at scale'],
+    resource:'GameAnalytics (free resources)', url:'https://www.gameanalytics.com/'}
+];
+
+const CHECKPOINTS = [
+  {id:'cp1', title:'Checkpoint 1 \u2014 Foundations & Engine', phases:'Phases 02\u201303', questions:[
+    {q:'What does the Godot scene tree fundamentally represent?', options:['A folder structure on disk','A hierarchy of nodes that make up everything in your game','A list of exported variables','A save file format'], correct:1, explain:'Every visible or logical part of a Godot project \u2014 sprites, UI, logic \u2014 is a node placed somewhere in this tree.'},
+    {q:'Which function should physics-based movement code go in?', options:['_process(delta)','_ready()','_physics_process(delta)','_input(event)'], correct:2, explain:'_physics_process runs on a fixed timestep, which is what physics calculations need to stay consistent.'},
+    {q:'What does move_and_slide() do on a CharacterBody?', options:['Teleports instantly, ignoring collisions','Moves the body and automatically handles sliding along collisions','Only works in 2D','Deletes the node after moving'], correct:1, explain:'It\u2019s a built-in helper that handles collision-aware movement so you don\u2019t hand-roll physics resolution yourself.'},
+    {q:'What is a signal in Godot?', options:['A global variable','A type of collision shape','An event a node emits that other nodes can connect to and respond to','A debugging print statement'], correct:2, explain:'Signals are Godot\u2019s event system \u2014 similar in spirit to event listeners in other languages.'},
+    {q:'Why use a CharacterBody instead of a plain Node for a player?', options:['It\u2019s required for any script to work','It comes with built-in physics/collision movement helpers','It renders sprites automatically','It only works for enemies'], correct:1, explain:'CharacterBody2D/3D exists specifically to make physics-aware movement (like move_and_slide) available.'},
+    {q:'What is an Area2D/3D commonly used for?', options:['Rendering the background','Detecting overlaps or triggers without full physics collision response','Playing audio','Storing save data'], correct:1, explain:'Areas are ideal for things like pickups, triggers, and detection zones that shouldn\u2019t physically collide.'},
+    {q:'In GDScript, what does class_name do?', options:['Renames the file','Registers a script as a globally accessible type','Deletes the class','Makes a variable private'], correct:1, explain:'class_name lets you reference that script as a type anywhere in the project, without needing to preload it.'},
+    {q:'What\u2019s the difference between _process and _physics_process?', options:['They\u2019re identical', '_process runs at a fixed timestep; _physics_process runs every frame', '_process runs every rendered frame; _physics_process runs on a fixed timestep', '_physics_process only runs once'], correct:2, explain:'_process is tied to the variable frame rate; _physics_process is tied to the fixed physics tick \u2014 that\u2019s why physics code belongs there.'}
+  ]},
+  {id:'cp2', title:'Checkpoint 2 \u2014 Core Systems & Networking', phases:'Phases 04\u201305', questions:[
+    {q:'Why use an Autoload/singleton for game state?', options:['It makes the game run faster','It keeps data persistent across scene changes without re-instancing it','It\u2019s required for saving','It\u2019s only used for audio'], correct:1, explain:'Autoloads exist outside the normal scene tree lifecycle, so their data survives scene changes.'},
+    {q:'What\u2019s a common risk of overusing singletons?', options:['They always use too much memory','They can\u2019t hold variables','Tightly coupled, hard-to-debug global state','Godot doesn\u2019t allow more than one'], correct:2, explain:'Reaching for a singleton for everything makes systems depend on hidden global state, which gets hard to trace.'},
+    {q:'Why is a save/load system considered a core system rather than optional polish?', options:['It\u2019s required by itch.io','It improves frame rate','It\u2019s only needed for 3D games','Players expect progress to persist \u2014 without it a game feels incomplete'], correct:3, explain:'No matter how good the mechanics are, losing progress on every relaunch reads as unfinished.'},
+    {q:'What does AnimationPlayer let you animate?', options:['Only sprite frames','Any property on any node','Only 3D skeletal meshes','Only camera movement'], correct:1, explain:'AnimationPlayer can key almost any node property over time, which is why it\u2019s used for far more than character animation.'},
+    {q:'Why use a finite state machine for an enemy instead of one big block of if-statements?', options:['It runs faster on the GPU','It prevents impossible states and makes behavior easier to reason about','It\u2019s required by CharacterBody nodes','It removes the need for collision detection'], correct:1, explain:'A state machine forces the enemy to be in exactly one clearly-defined state at a time, which scales far better than nested conditionals.'},
+    {q:'What\u2019s the main benefit of using TileMaps for 2D level layout?', options:['They automatically generate game design ideas','They make levels load faster than any other method','They let you paint and reuse level geometry instead of hand-placing every piece','They are required for any 2D physics to work'], correct:2, explain:'TileMaps turn level-building into painting from a reusable tile set rather than manually placing individual nodes.'},
+    {q:'What is Godot\u2019s high-level multiplayer API built on top of by default?', options:['A custom TCP implementation only','ENet, with WebRTC and WebSocket options also available','A REST API','Godot does not support multiplayer'], correct:1, explain:'Godot provides multiple peer implementations (ENet, WebRTC, WebSocket) behind one high-level API.'},
+    {q:'Why does naive multiplayer code often break under real-world conditions?', options:['Godot doesn\u2019t support more than 2 players','It usually doesn\u2019t account for latency, so state gets out of sync between players','Networking always requires a dedicated server','GDScript can\u2019t send data over a network'], correct:1, explain:'Code that works perfectly on localhost often falls apart once real latency and packet loss are introduced \u2014 this is why prediction and reconciliation exist as techniques.'}
+  ]},
+  {id:'cp3', title:'Checkpoint 3 \u2014 Design & Level Design', phases:'Phases 06\u201307', questions:[
+    {q:'What is a "core loop" in game design?', options:['The game\u2019s main menu flow','The render loop in the engine\u2019s source code','The repeatable sequence of actions a player performs that forms the base of the experience','The save/load cycle'], correct:2, explain:'It\u2019s the small, repeatable cycle that everything else in the design builds on top of.'},
+    {q:'What\u2019s a warning sign of a weak core loop?', options:['It involves combat','It changes between levels','You can\u2019t describe it in a sentence or two','It has more than one verb'], correct:2, explain:'If the core loop takes a paragraph to explain, it usually means the design hasn\u2019t been focused enough yet.'},
+    {q:'What is the "lens" framework from The Art of Game Design used for?', options:['Choosing a rendering engine','Evaluating a design decision from many different angles','Writing dialogue','Optimizing frame rate'], correct:1, explain:'Each "lens" is a question you can ask of your design to examine it from a different perspective.'},
+    {q:'What does "game feel" or "juice" refer to?', options:['The story and narrative tone','The moment-to-moment feedback \u2014 screen shake, hit-stop, sound cues \u2014 that makes actions satisfying','The game\u2019s difficulty curve','The marketing copy on a store page'], correct:1, explain:'Juice is the layer of responsive feedback that makes a mechanically sound action actually feel good to perform.'},
+    {q:'In level design, what does "greyboxing" or "blockout" mean?', options:['Releasing a demo for free','Building a level\u2019s layout with simple placeholder geometry before the art pass', 'Removing all color from a finished level','Testing a level on grayscale monitors'], correct:1, explain:'Blocking out pacing and flow with simple shapes lets you iterate fast before investing in final art.'},
+    {q:'What\u2019s a core goal of good level design, according to level design theory?', options:['Maximizing the number of enemies per room','Teaching mechanics and guiding the player through space, often without text','Making every level the same length','Avoiding any challenge for the first hour'], correct:1, explain:'Well-designed spaces teach and guide implicitly \u2014 through layout, sightlines, and pacing \u2014 rather than relying on instructional text.'},
+    {q:'Why study existing shipped games as level design case studies?', options:['To copy them exactly','To see how real, tested designs solve pacing and teaching problems','Because original level design isn\u2019t possible','It\u2019s required before using Godot\u2019s TileMap'], correct:1, explain:'Analyzing how real levels guide players is one of the fastest ways to internalize pacing and flow principles.'}
+  ]},
+  {id:'cp4', title:'Checkpoint 4 \u2014 Writing, Art & Audio', phases:'Phases 08\u201310', questions:[
+    {q:'Why does narrative design matter even in games that aren\u2019t story-focused?', options:['It doesn\u2019t \u2014 only RPGs need it','Every game still makes choices about player agency and framing that are narrative decisions','Narrative design is only about writing dialogue','It\u2019s purely a marketing concern'], correct:1, explain:'Even minimal framing and player-agency choices are narrative decisions, whether or not a game is "story-driven".'},
+    {q:'Why write with localization in mind from the start?', options:['It makes the initial writing faster','Idioms, wordplay and fixed text length all break when translated later, and are expensive to fix retroactively','Localization is only relevant for AAA games','Godot cannot support non-English text'], correct:1, explain:'Writing that assumes a fixed language and length creates rework later \u2014 easier to design around from day one.'},
+    {q:'In pixel art, why does palette size matter?', options:['More colors always look better','Fewer, well-chosen colors improve readability and cohesion at small sizes','It only affects file format','It\u2019s a Godot-specific requirement'], correct:1, explain:'A tight, deliberate palette reads more clearly at small sizes and gives a sprite set a consistent feel.'},
+    {q:'What does "low-poly" mean in 3D modeling for games?', options:['Models with no textures','A low polygon count, kept performant and stylistically simple','Models that can\u2019t be animated','A Blender-only file type'], correct:1, explain:'Keeping polygon counts low is a performance and style choice \u2014 not a limitation of the tool.'},
+    {q:'What\u2019s the main advantage of studying free CC0 asset packs?', options:['They\u2019re legally required for commercial games','Seeing how professional, game-ready assets are structured and styled','They replace the need to learn art entirely','They only work in Unity'], correct:1, explain:'Taking apart assets that already ship in real games is a fast way to learn proportion, scale and consistency.'},
+    {q:'Which license lets you use an asset commercially with zero attribution required?', options:['CC-BY-NC','All Rights Reserved','CC0','Royalty-Free, always'], correct:2, explain:'CC0 places a work in the public domain \u2014 no credit or permission needed.'},
+    {q:'Which node fits background music that shouldn\u2019t change with player position?', options:['AudioStreamPlayer2D','AudioStreamPlayer3D','AnimationPlayer','AudioStreamPlayer'], correct:3, explain:'The plain AudioStreamPlayer is non-positional \u2014 correct for music or UI sound regardless of where anything is in the world.'}
+  ]},
+  {id:'cp5', title:'Checkpoint 5 \u2014 Production, QA & Accessibility', phases:'Phases 11\u201313', questions:[
+    {q:'What is "silent scope creep"?', options:['A bug where audio silently fails','A game with no sound design','Small feature additions that individually seem reasonable but collectively overwhelm the project','A marketing strategy of releasing without a trailer'], correct:2, explain:'It\u2019s scope creep that doesn\u2019t feel like scope creep in the moment \u2014 each addition seems small, but they add up.'},
+    {q:'Why does a project benefit from defined milestones (prototype / alpha / beta / release)?', options:['Milestones are only useful for teams, not solo devs','They give a way to notice you\u2019re off track before it\u2019s expensive to fix','Godot requires them for exporting','They\u2019re only relevant for Steam submissions'], correct:1, explain:'Without checkpoints, a project can drift for months before anyone notices it\u2019s not converging.'},
+    {q:'What makes a bug report actually useful?', options:['A general description like "it\u2019s broken"','Clear reproduction steps, expected vs. actual behavior','Just a screenshot with no context','The developer\u2019s guess at the cause'], correct:1, explain:'A reproducible report is what lets a bug actually get fixed and verified, rather than found once and lost.'},
+    {q:'What is regression testing?', options:['Testing only new features','Re-testing existing functionality after a change to make sure it still works','A type of accessibility testing','Testing performance under load'], correct:1, explain:'Fixing one thing can silently break another \u2014 regression testing catches that before players do.'},
+    {q:'When structuring a playtest session, what should you avoid?', options:['Asking open-ended questions','Leading questions that suggest the "right" answer','Watching the player without commenting','Taking notes'], correct:1, explain:'Leading questions ("wasn\u2019t that jump satisfying?") bias the feedback instead of revealing what the player actually experienced.'},
+    {q:'According to the Game Accessibility Guidelines, which four issues are among the most commonly cited by players?', options:['Framerate, resolution, load times, file size','Remapping, text size, colorblindness, subtitle presentation','Multiplayer lag, matchmaking, server cost, region locking','Art style, music genre, voice acting, difficulty name'], correct:1, explain:'These four are called out specifically as cheap-to-fix, high-impact issues worth addressing early.'},
+    {q:'What does "localization-ready" mean technically?', options:['The game is already translated into every language','All in-game text is externalized rather than hardcoded, so it can be swapped per language','The game uses only images, no text','It only applies to voice acting'], correct:1, explain:'Externalizing text is the technical prerequisite that makes adding new languages later feasible at all.'}
+  ]},
+  {id:'cp6', title:'Checkpoint 6 \u2014 Optimization, Publishing, Marketing & Business', phases:'Phases 14\u201318', questions:[
+    {q:'What\u2019s the point of profiling before optimizing?', options:['Profiling replaces the need to ever optimize','It\u2019s only useful for 3D games','To find the actual bottleneck instead of guessing and wasting effort','It automatically fixes performance issues'], correct:2, explain:'Optimizing the wrong thing wastes time \u2014 profiling tells you what\u2019s actually slow.'},
+    {q:'What is object pooling used for?', options:['Storing save files','Reusing objects instead of constantly creating/destroying them, to cut overhead','Grouping UI elements','A Godot audio effect'], correct:1, explain:'Constant instantiation and deletion is expensive \u2014 pooling reuses objects instead.'},
+    {q:'Why does exporting for mobile require more than just a different preset?', options:['It doesn\u2019t \u2014 it\u2019s identical to a PC export','Touch input, performance ceilings and store requirements all differ from desktop','Mobile exports don\u2019t support GDScript','Mobile games can\u2019t use TileMaps'], correct:1, explain:'Each platform has genuinely different constraints, not just a different button in the export dialog.'},
+    {q:'On itch.io, what does "pay-what-you-want" pricing let a player do?', options:['Only pay in in-game currency','Choose their own price, including zero, often with a suggested minimum','Requires a fixed minimum always','Only works for browser games'], correct:1, explain:'It\u2019s flexible pricing \u2014 the creator can even suggest an amount without enforcing it.'},
+    {q:'On Steam, what happens after paying the Steam Direct fee?', options:['The game goes live immediately','A mandatory 30-day wait begins before release is possible','The fee is charged monthly','Nothing \u2014 the fee is purely optional'], correct:1, explain:'Valve enforces a 30-day wait after the fee is paid, on top of a minimum 2-week public Coming Soon period \u2014 both need planning around.'},
+    {q:'Why does a "Coming Soon" page matter for wishlist strategy?', options:['It\u2019s required to accept payments','Wishlist momentum built before launch strongly influences Steam\u2019s discovery algorithm','It replaces the need for a trailer','It only matters for free games'], correct:1, explain:'Launching with zero wishlists gives the algorithm no signal to work with \u2014 pre-launch wishlists are the highest-leverage marketing activity on Steam specifically.'},
+    {q:'Why check asset and music licenses before shipping, not after?', options:['Licenses are unenforceable in practice','A license violation can force a game offline post-launch, after a takedown notice','All game assets are automatically CC0','Licensing only applies to paid games'], correct:1, explain:'A takedown notice after launch is a far worse outcome than checking license terms up front.'},
+    {q:'Why is business-structure advice here described as "background" rather than a final answer?', options:['Because it doesn\u2019t matter until you\u2019re rich','Because specifics vary by country and this isn\u2019t a substitute for an actual accountant','Because Steam handles all tax obligations automatically','Because sole trader structures don\u2019t exist outside the US'], correct:1, explain:'Tax and business-structure rules are jurisdiction-specific \u2014 general concepts are useful context, but a real accountant should make the actual call.'}
+  ]}
+];
+
+/* ---------------- STORAGE ---------------- */
+
+const STORE_KEY = 'gamedev_blueprint_state_v3';
+const hasWidgetStorage = (typeof window !== 'undefined' && typeof window.storage !== 'undefined');
+
+async function loadState(){
+  let raw = null;
+  if (hasWidgetStorage) {
+    try { const r = await window.storage.get(STORE_KEY, false); raw = r ? r.value : null; }
+    catch(e){ raw = null; }
+  } else {
+    try { raw = localStorage.getItem(STORE_KEY); } catch(e){ raw = null; }
+  }
+  const fallback = { studied:{}, checkpoints:{}, builds:[], visits:[], milestones:{} };
+  if (!raw) return fallback;
+  try { return Object.assign({}, fallback, JSON.parse(raw)); } catch(e){ return fallback; }
+}
+
+async function saveState(state){
+  const raw = JSON.stringify(state);
+  if (hasWidgetStorage) {
+    try { await window.storage.set(STORE_KEY, raw, false); return; } catch(e){}
+  }
+  try { localStorage.setItem(STORE_KEY, raw); } catch(e){}
+}
+
+let STATE = { studied:{}, checkpoints:{}, builds:[], visits:[], milestones:{} };
+
+/* ---------------- HELPERS ---------------- */
+
+function todayStr(){ return new Date().toISOString().slice(0,10); }
+
+function computePhasePct(phaseId){
+  const courses = COURSES.filter(c => c.phase === phaseId);
+  if (courses.length === 0) return null;
+  const done = courses.filter(c => STATE.studied[c.id]).length;
+  return Math.round((done / courses.length) * 100);
+}
+
+function overallProgressPct(){
+  const done = Object.keys(STATE.studied).filter(k => STATE.studied[k]).length;
+  return COURSES.length ? Math.round((done / COURSES.length) * 100) : 0;
+}
+
+function computeStreak(){
+  const dates = [...new Set(STATE.visits)].sort();
+  if (dates.length === 0) return 0;
+  let streak = 0;
+  let cursor = new Date(todayStr());
+  const dateSet = new Set(dates);
+  while (true) {
+    const key = cursor.toISOString().slice(0,10);
+    if (dateSet.has(key)) { streak++; cursor.setDate(cursor.getDate() - 1); }
+    else break;
+  }
+  return streak;
+}
+
+function mechanicsAvailable(phaseId){
+  return GROUND_RULES.filter(r => r.unlockPhase <= phaseId);
+}
+
+function nextUpCourse(){
+  for (const phase of PHASES) {
+    if (phase.id === 19) continue;
+    const courses = COURSES.filter(c => c.phase === phase.id);
+    for (const c of courses) {
+      if (!STATE.studied[c.id]) return {type:'course', course:c, phase};
+    }
+    const milestones = MILESTONE_BUILDS.filter(m => m.afterPhase === phase.id);
+    for (const m of milestones) {
+      if (!STATE.milestones[m.id]) return {type:'milestone', milestone:m, phase};
+    }
+  }
+  return null;
+}
+
+function genresCovered(){
+  const used = new Set(STATE.builds.map(b => b.genre).filter(Boolean));
+  return PRACTICE_GENRES.map(g => ({ genre:g, covered: used.has(g) }));
+}
+
+function mechanicsCovered(){
+  const used = new Set();
+  STATE.builds.forEach(b => (b.mechanics || []).forEach(m => used.add(m)));
+  return GROUND_RULES.map(r => ({ rule:r, covered: used.has(r.key) }));
+}
+
+const PRACTICE_GENRES = [
+  'Avoidance / Chase',
+  'Platformer',
+  'Puzzle',
+  'Top-down Action / Dungeon Crawler',
+  'Shooter (bullet-hell or on-rails)',
+  'Idle / Incremental or Management-Sim',
+  'Narrative / Dialogue-driven',
+  'Multiplayer (local or online)'
+];
+
+async function persistAndRerender(){
+  await saveState(STATE);
+  render();
+}
+
+/* ---------------- ACTIONS ---------------- */
+
+async function toggleCourse(id){
+  STATE.studied[id] = !STATE.studied[id];
+  await persistAndRerender();
+}
+
+async function toggleMilestone(id){
+  STATE.milestones[id] = !STATE.milestones[id];
+  await persistAndRerender();
+}
+
+async function submitCheckpoint(cpId){
+  const cp = CHECKPOINTS.find(c => c.id === cpId);
+  let score = 0;
+  cp.questions.forEach((q, i) => {
+    const selected = document.querySelector('input[name="' + cpId + '-q' + i + '"]:checked');
+    const chosen = selected ? parseInt(selected.value, 10) : -1;
+    const resultEl = document.getElementById(cpId + '-result-' + i);
+    if (chosen === q.correct) {
+      score++;
+      resultEl.className = 'quiz-result show correct';
+      resultEl.textContent = 'Correct \u2014 ' + q.explain;
+    } else {
+      resultEl.className = 'quiz-result show incorrect';
+      resultEl.textContent = (chosen === -1 ? 'No answer selected. ' : 'Not quite. ') + q.explain;
+    }
+  });
+  STATE.checkpoints[cpId] = { completed:true, score, total:cp.questions.length };
+  await saveState(STATE);
+  document.getElementById(cpId + '-score').textContent =
+    'Score: ' + score + ' / ' + cp.questions.length;
+  document.getElementById(cpId + '-score').style.display = 'block';
+}
+
+function onGenreChange(sel){
+  const other = document.getElementById('genreOtherWrap');
+  other.style.display = (sel.value === 'Other') ? 'block' : 'none';
+}
+
+async function addBuild(e){
+  e.preventDefault();
+  const form = e.target;
+  const title = form.title.value.trim();
+  if (!title) return;
+  const pitch = form.pitch.value.trim();
+  const status = form.status.value;
+  const link = form.link.value.trim();
+  const notes = form.notes.value.trim();
+  let genre = form.genre.value;
+  if (genre === 'Other') { genre = form.genre_other.value.trim() || 'Other'; }
+  const skills = [...form.querySelectorAll('input[name="skill"]:checked')].map(i => i.value);
+  const mechanics = [...form.querySelectorAll('input[name="mechanic"]:checked')].map(i => i.value);
+  STATE.builds.unshift({ id: 'b' + Date.now(), title, pitch, status, link, notes, skills, mechanics, genre, createdAt: todayStr() });
+  await persistAndRerender();
+}
+
+async function deleteBuild(id){
+  STATE.builds = STATE.builds.filter(b => b.id !== id);
+  await persistAndRerender();
+}
+
+async function computePace(){
+  const hrsPerWeek = parseFloat(document.getElementById('paceHours').value) || 0;
+  const remainingHours = COURSES.filter(c => !STATE.studied[c.id]).reduce((sum,c) => sum + c.hours, 0);
+  const out = document.getElementById('paceOut');
+  if (hrsPerWeek <= 0) { out.textContent = 'Enter hours per week to see an estimate.'; return; }
+  const weeks = Math.ceil(remainingHours / hrsPerWeek);
+  const finishDate = new Date();
+  finishDate.setDate(finishDate.getDate() + weeks * 7);
+  out.textContent = remainingHours + ' study hours remaining \u2192 about ' + weeks + ' week' + (weeks===1?'':'s') +
+    ' at that pace, finishing around ' + finishDate.toLocaleDateString(undefined, {year:'numeric', month:'short', day:'numeric'}) + '.';
+}
+
+/* ---------------- RENDER ---------------- */
+
+const TABS = [
+  {id:'blueprint', label:'Blueprint'},
+  {id:'study', label:'Study'},
+  {id:'checkpoints', label:'Checkpoints'},
+  {id:'builds', label:'Builds'},
+  {id:'today', label:'Today'}
+];
+let activeTab = 'blueprint';
+
+function switchTab(id){ activeTab = id; render(); }
+
+function renderTabs(){
+  const nav = document.getElementById('tabs');
+  nav.innerHTML = TABS.map(t =>
+    '<button class="' + (t.id === activeTab ? 'active' : '') + '" onclick="switchTab(\'' + t.id + '\')">' + t.label + '</button>'
+  ).join('');
+}
+
+function renderCourseRow(c){
+  const done = !!STATE.studied[c.id];
+  return '<div class="course">' +
+    '<input type="checkbox" ' + (done ? 'checked' : '') + ' onchange="toggleCourse(\'' + c.id + '\')">' +
+    '<div class="course-body">' +
+      '<div class="course-head">' +
+        '<span class="course-title ' + (done ? 'done' : '') + '">' + c.title + '</span>' +
+        '<span class="hours">~' + c.hours + 'h</span>' +
+      '</div>' +
+      '<p class="why">' + c.why + '</p>' +
+      '<ul class="learn-list">' + c.learn.map(l => '<li>' + l + '</li>').join('') + '</ul>' +
+      '<a class="resource-link" href="' + c.url + '" target="_blank" rel="noopener">' + c.resource + ' \u2197</a>' +
+    '</div>' +
+  '</div>';
+}
+
+function renderMilestoneRow(m){
+  const done = !!STATE.milestones[m.id];
+  const avail = mechanicsAvailable(m.afterPhase);
+  return '<div class="milestone">' +
+    '<input type="checkbox" ' + (done ? 'checked' : '') + ' onchange="toggleMilestone(\'' + m.id + '\')">' +
+    '<div>' +
+      '<h4 class="' + (done ? 'done' : '') + '">' + m.label + '</h4>' +
+      '<p>' + m.hint + '</p>' +
+      '<p class="scope">' + m.scope + '</p>' +
+      '<p class="unlock">Mechanics available by now: ' + avail.map(r => r.label).join(', ') + '</p>' +
+    '</div>' +
+  '</div>';
+}
+
+function renderGroundRulesSubset(list){
+  return '<ul class="ground-rules">' + list.map(r =>
+    '<li><div class="gr-label">' + r.label + '</div><div class="gr-desc">' + r.desc + '</div></li>'
+  ).join('') + '</ul>';
+}
+
+/* Shared by both Blueprint and Study so the two tabs can never drift out of sync. */
+function renderPhaseExtras(phaseId){
+  let html = '';
+  if (phaseId === 1) {
+    const easy = GROUND_RULES.filter(r => r.unlockPhase === 1);
+    html += '<div style="margin-top:14px; padding-top:14px; border-top:1px solid var(--border);">' +
+      '<p class="blurb" style="margin-top:0;"><strong>Stop studying, start building.</strong> Ground rules for these two \u2014 aim for most of these:</p>' +
+      renderGroundRulesSubset(easy) +
+      '<p class="blurb" style="margin-top:14px;">Two games, same skills, different genre \u2014 log each in the Builds tab once it\u2019s playable:</p>' +
+    '</div>';
+  }
+  const milestones = MILESTONE_BUILDS.filter(m => m.afterPhase === phaseId);
+  if (milestones.length) {
+    html += milestones.map(renderMilestoneRow).join('');
+  }
+  return html;
+}
+
+function renderBlueprint(){
+  const rows = PHASES.map(p => {
+    const pct = p.id === 1 ? null : computePhasePct(p.id);
+    let block = '<div class="phase-row">' +
+      '<div class="phase-code">' + p.code + '</div>' +
+      '<div class="phase-info"><h3>' + p.name + (p.tag === 'Optional' ? ' <span class="tag optional" style="margin-left:6px;">optional</span>' : '') + '</h3><p>' + p.blurb + '</p></div>' +
+      '<div class="phase-pct">' + (pct === null ? (p.id === 1 ? '' : '\u2014') : pct + '%') + '</div>' +
+    '</div>';
+    const extras = renderPhaseExtras(p.id);
+    if (extras) block += '<div style="padding:0 0 4px 48px;">' + extras + '</div>';
+    return block;
+  }).join('');
+  const overall = overallProgressPct();
+  return '<div class="sheet" data-sheet="MASTER">' +
+    '<h2>Construction progress</h2>' +
+    '<p class="blurb">Two quick games up front, then one milestone build spaced after almost every phase from here \u2014 each one telling you exactly which mechanics just became available. Full checklists live in the Builds tab.</p>' +
+    '<div class="progress-bar"><div style="width:' + overall + '%"></div></div>' +
+    '<div class="progress-label">' + overall + '% of Study items marked done</div>' +
+    rows +
+  '</div>';
+}
+
+function renderStudy(){
+  const sections = PHASES.filter(p => p.id !== 19).map(p => {
+    const courses = COURSES.filter(c => c.phase === p.id);
+    const extras = renderPhaseExtras(p.id);
+    if (courses.length === 0 && !extras) return '';
+    const items = courses.map(renderCourseRow).join('');
+    return '<div class="sheet" data-sheet="' + p.code + '">' +
+      '<span class="tag' + (p.tag === 'Optional' ? ' optional' : '') + '">' + p.tag + '</span>' +
+      '<h2>' + p.name + '</h2>' +
+      items +
+      extras +
+    '</div>';
+  }).join('');
+  return sections;
+}
+
+function renderCheckpoints(){
+  return CHECKPOINTS.map(cp => {
+    const state = STATE.checkpoints[cp.id];
+    const questions = cp.questions.map((q, i) => {
+      const opts = q.options.map((o, oi) =>
+        '<label><input type="radio" name="' + cp.id + '-q' + i + '" value="' + oi + '"> ' + o + '</label>'
+      ).join('');
+      return '<div class="quiz-q">' +
+        '<p class="qtext">' + (i+1) + '. ' + q.q + '</p>' +
+        opts +
+        '<div class="quiz-result" id="' + cp.id + '-result-' + i + '"></div>' +
+      '</div>';
+    }).join('');
+    const scoreShown = state && state.completed;
+    return '<div class="sheet" data-sheet="CHK">' +
+      '<span class="tag">' + cp.phases + '</span>' +
+      '<h2>' + cp.title + '</h2>' +
+      questions +
+      '<button class="primary" onclick="submitCheckpoint(\'' + cp.id + '\')">Check my answers</button>' +
+      '<div class="quiz-score" id="' + cp.id + '-score" style="display:' + (scoreShown ? 'block' : 'none') + '">' +
+        (scoreShown ? 'Score: ' + state.score + ' / ' + state.total : '') +
+      '</div>' +
+    '</div>';
+  }).join('');
+}
+
+function renderBuilds(){
+  const skillOptions = ['Programming','Engine','Systems','Networking','Design','Level Design','Writing','Art','Audio','Production','QA','Accessibility','Shipping','Marketing','Business'];
+
+  const genreList = genresCovered();
+  const genreChecklist = '<div class="checklist-grid">' + genreList.map(g =>
+    '<div class="checklist-item ' + (g.covered ? 'covered' : 'uncovered') + '"><span class="mark ' + (g.covered ? 'yes' : 'no') + '">' + (g.covered ? '\u2713' : '\u2013') + '</span>' + g.genre + '</div>'
+  ).join('') + '</div>';
+
+  const mechList = mechanicsCovered();
+  const mechChecklist = '<div class="checklist-grid">' + mechList.map(m =>
+    '<div class="checklist-item ' + (m.covered ? 'covered' : 'uncovered') + '"><span class="mark ' + (m.covered ? 'yes' : 'no') + '">' + (m.covered ? '\u2713' : '\u2013') + '</span>' + m.rule.label + '</div>'
+  ).join('') + '</div>';
+
+  const checklistsHtml = '<div class="sheet" data-sheet="TYPES">' +
+    '<h2>Game types checklist</h2>' +
+    '<p class="blurb">Checked automatically once a logged build\u2019s genre matches.</p>' +
+    genreChecklist +
+  '</div>' +
+  '<div class="sheet" data-sheet="MECH">' +
+    '<h2>Mechanics checklist</h2>' +
+    '<p class="blurb">Checked once any logged build includes that mechanic. Save states and audio only make sense to check once you\u2019ve reached the phase that teaches them.</p>' +
+    mechChecklist +
+  '</div>';
+
+  const genreOptions = PRACTICE_GENRES.map(g => '<option value="' + g + '">' + g + '</option>').join('') + '<option value="Other">Other</option>';
+
+  const formHtml = '<div class="sheet" data-sheet="NEW">' +
+    '<h2>Log a build</h2>' +
+    '<p class="blurb">Your idea, your scope \u2014 this just tracks what you\u2019ve made and what it demonstrates.</p>' +
+    '<form class="build-form" onsubmit="addBuild(event)">' +
+      '<div class="field-label">Title</div>' +
+      '<input type="text" name="title" required>' +
+      '<div class="field-label">One-line pitch</div>' +
+      '<input type="text" name="pitch">' +
+      '<div class="field-label">Status</div>' +
+      '<select name="status"><option>Prototype</option><option>Playable</option><option>Shipped</option></select>' +
+      '<div class="field-label">Genre / type</div>' +
+      '<select name="genre" onchange="onGenreChange(this)">' + genreOptions + '</select>' +
+      '<div id="genreOtherWrap" style="display:none;"><input type="text" name="genre_other" placeholder="Specify genre"></div>' +
+      '<div class="field-label">Mechanics included</div>' +
+      '<div class="skill-tags">' + GROUND_RULES.map(r => '<label><input type="checkbox" name="mechanic" value="' + r.key + '">' + r.label + '</label>').join('') + '</div>' +
+      '<div class="field-label">Skills demonstrated</div>' +
+      '<div class="skill-tags">' + skillOptions.map(s => '<label><input type="checkbox" name="skill" value="' + s + '">' + s + '</label>').join('') + '</div>' +
+      '<div class="field-label">Link (itch.io, GitHub, etc. \u2014 optional)</div>' +
+      '<input type="text" name="link">' +
+      '<div class="field-label">Notes</div>' +
+      '<textarea name="notes"></textarea>' +
+      '<button class="primary" type="submit">Add build</button>' +
+    '</form>' +
+  '</div>';
+
+  const list = STATE.builds.length === 0
+    ? '<p class="empty">No builds logged yet \u2014 your first finished (or in-progress) game will show up here.</p>'
+    : STATE.builds.map(b =>
+        '<div class="build-card">' +
+          '<button class="ghost del" onclick="deleteBuild(\'' + b.id + '\')">Remove</button>' +
+          '<span class="status">' + b.status + '</span>' +
+          (b.genre ? '<span class="genre">' + b.genre + '</span>' : '') +
+          '<h3>' + b.title + '</h3>' +
+          (b.pitch ? '<p>' + b.pitch + '</p>' : '') +
+          (b.mechanics && b.mechanics.length ? '<div class="skills">Mechanics: ' + b.mechanics.map(k => (GROUND_RULES.find(r=>r.key===k)||{label:k}).label).join(', ') + '</div>' : '') +
+          (b.skills && b.skills.length ? '<div class="skills">Skills: ' + b.skills.join(', ') + '</div>' : '') +
+          (b.link ? '<p><a href="' + b.link + '" target="_blank" rel="noopener">' + b.link + ' \u2197</a></p>' : '') +
+          (b.notes ? '<p>' + b.notes + '</p>' : '') +
+        '</div>'
+      ).join('');
+
+  return checklistsHtml + formHtml + '<div class="sheet" data-sheet="LOG"><h2>Your builds</h2>' + list + '</div>';
+}
+
+function renderToday(){
+  const streak = computeStreak();
+  const next = nextUpCourse();
+  const overall = overallProgressPct();
+  const checkpointsDone = Object.values(STATE.checkpoints).filter(c => c.completed).length;
+
+  const last28 = [];
+  const visitSet = new Set(STATE.visits);
+  for (let i = 27; i >= 0; i--) {
+    const d = new Date();
+    d.setDate(d.getDate() - i);
+    const key = d.toISOString().slice(0,10);
+    last28.push(visitSet.has(key));
+  }
+  const heat = last28.map(f => '<div class="cell ' + (f ? 'filled' : '') + '"></div>').join('');
+
+  let nextHtml;
+  if (!next) {
+    nextHtml = '<h3>Everything done</h3><p class="blurb">Move to Phase 19 \u2014 keep designing on your own terms and log builds under Builds.</p>';
+  } else if (next.type === 'milestone') {
+    nextHtml = '<h3>' + next.milestone.label + '</h3><p class="blurb">After Phase ' + next.phase.code + ' \u2014 ' + next.phase.name + ' \u00b7 ' + next.milestone.scope + '</p>';
+  } else {
+    nextHtml = '<h3>' + next.course.title + '</h3><p class="blurb">Phase ' + next.phase.code + ' \u2014 ' + next.phase.name + ' \u00b7 ~' + next.course.hours + 'h</p>';
+  }
+
+  return '<div class="today-grid">' +
+    '<div class="sheet" data-sheet="A"><div class="stat-num">' + streak + '</div><div class="stat-label">day streak</div></div>' +
+    '<div class="sheet" data-sheet="B"><div class="stat-num">' + overall + '%</div><div class="stat-label">of Study items done \u00b7 ' + checkpointsDone + ' / 6 checkpoints passed</div></div>' +
+  '</div>' +
+  '<div class="sheet" data-sheet="C">' +
+    '<h2>Next up</h2>' + nextHtml +
+  '</div>' +
+  '<div class="sheet" data-sheet="D">' +
+    '<h2>Last 28 days</h2>' +
+    '<div class="heatmap">' + heat + '</div>' +
+  '</div>' +
+  '<div class="sheet" data-sheet="E">' +
+    '<h2>Pace</h2>' +
+    '<p class="blurb">How many hours a week can you realistically put in?</p>' +
+    '<div class="pace-row"><input type="number" id="paceHours" min="0" step="0.5" placeholder="e.g. 6"> <button class="ghost" onclick="computePace()">Calculate</button></div>' +
+    '<div class="pace-out" id="paceOut"></div>' +
+  '</div>';
+}
+
+function render(){
+  renderTabs();
+  const el = document.getElementById('tabContent');
+  if (activeTab === 'blueprint') el.innerHTML = renderBlueprint();
+  else if (activeTab === 'study') el.innerHTML = renderStudy();
+  else if (activeTab === 'checkpoints') el.innerHTML = renderCheckpoints();
+  else if (activeTab === 'builds') el.innerHTML = renderBuilds();
+  else if (activeTab === 'today') el.innerHTML = renderToday();
+
+  document.getElementById('metaProgress').innerHTML = 'Progress: <b>' + overallProgressPct() + '%</b>';
+  document.getElementById('metaStreak').innerHTML = 'Streak: <b>' + computeStreak() + ' day' + (computeStreak()===1?'':'s') + '</b>';
+}
+
+/* ---------------- INIT ---------------- */
+
+async function init(){
+  STATE = await loadState();
+  const t = todayStr();
+  if (!STATE.visits.includes(t)) STATE.visits.push(t);
+  await saveState(STATE);
+  render();
+}
+
+init();
+</script>
+</body>
+</html>
